@@ -120,8 +120,10 @@ pub fn update(state: &mut App, message: Message) -> Task<Message> {
             let _ = state.config.save();
 
             if let Err(e) = state.player.open(&path.to_string_lossy()) {
+                tracing::error!("Failed to open file: {e}");
                 state.set_osd(format!("Error: {}", e));
             } else {
+                tracing::info!("Successfully opened media file: {:?}", path);
                 state.set_osd(format!("Opened: {}", path.file_name().unwrap_or_default().to_string_lossy()));
                 // Play automatically on load
                 let _ = state.player.play();
@@ -225,13 +227,18 @@ pub fn update(state: &mut App, message: Message) -> Task<Message> {
             return Task::done(Message::SetSpeed(1.0));
         }
         Message::NewFrame(frame) => {
+            if state.current_frame.is_none() {
+                tracing::info!("First video frame decoded successfully: {}x{}", frame.width, frame.height);
+            }
             state.current_frame = Some(frame);
         }
         Message::PlayerError(err) => {
+            tracing::error!("GStreamer pipeline error: {err}");
             state.set_osd(format!("Error: {}", err));
             state.is_playing = false;
         }
         Message::PlayerEos => {
+            tracing::info!("Playback reached End-Of-Stream");
             let _ = state.player.stop();
             state.is_playing = false;
             state.position = Duration::ZERO;
