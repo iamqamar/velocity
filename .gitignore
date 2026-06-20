@@ -1,0 +1,46 @@
+# Build artifacts
+/target
+debug/
+*.pdb
+*.exe
+*.dll
+*.dylib
+*.so
+
+# Cargo
+**/*.rs.bk
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.vs/
+
+# OS junk
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# GStreamer local runtime (bundled for dev, not committed)
+gstreamer/
+gst-plugins/
+
+# MSIX packaging output
+packaging/*.msix
+packaging/*.appx
+packaging/_build/
+
+# Logs and crash dumps
+*.log
+*.dmp
+
+# Profiling
+perf.data
+flamegraph.svg
+*.profraw
+
+# Environment
+.env
+.env.local
