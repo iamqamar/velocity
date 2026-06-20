@@ -1,19 +1,66 @@
-use std::process;
+use std::path::PathBuf;
+use clap::Parser;
+use crossbeam_channel::unbounded;
+use iced::{window, Size, Task};
 
-fn main() {
-    // TODO: wire up CLI arg parsing (clap) and iced app launch
-    // For now just confirm the binary runs and GStreamer will init later.
+pub mod app;
+pub mod engine;
+pub mod platform;
+pub mod ui;
+pub mod utils;
 
-    println!("velocity v{}", env!("CARGO_PKG_VERSION"));
+use app::{App, Message};
+use engine::Player;
 
-    if let Err(e) = run() {
-        eprintln!("fatal: {e}");
-        process::exit(1);
-    }
+#[derive(Parser, Debug)]
+#[command(
+    name = "Velocity",
+    version,
+    about = "A modern, high-performance video player",
+    long_about = None
+)]
+struct Args {
+    /// Path to a video file to play
+    file: Option<PathBuf>,
 }
 
-fn run() -> Result<(), Box<dyn std::error::Error>> {
-    // placeholder — this is where the iced Application::run() call will go
-    // once we pull in the gui and engine crates.
-    Ok(())
+fn main() -> iced::Result {
+    // Initialize logging
+    utils::logger::init();
+
+    // Parse command line arguments
+    let args = Args::parse();
+    let file_to_open = args.file;
+
+    // Launch iced application using functional builder
+    iced::application(app::title, app::update, app::view)
+        .theme(|_| ui::theme::velocity_dark())
+        .subscription(app::subscription)
+        .window(window::Settings {
+            size: Size::new(1280.0, 720.0),
+            ..Default::default()
+        })
+        .run_with(move || {
+            let (tx, rx) = unbounded();
+
+            // Create player
+            let player = match Player::new(tx) {
+                Ok(p) => p,
+                Err(e) => {
+                    tracing::error!("Failed to initialize GStreamer: {e}");
+                    panic!("Failed to initialize GStreamer: {e}");
+                }
+            };
+
+            let app_state = App::new(player, rx);
+
+            // If a file was passed as argument, open it immediately
+            let task = if let Some(path) = file_to_open {
+                Task::done(Message::OpenFile(path))
+            } else {
+                Task::none()
+            };
+
+            (app_state, task)
+        })
 }

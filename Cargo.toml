@@ -2,7 +2,34 @@
 name = "velocity"
 version = "0.1.0"
 edition = "2024"
-description = "A modern, high-performance video player for Windows — built in Rust"
+description = "A modern, high-performance video player for Windows"
 license = "MIT OR Apache-2.0"
 
 [dependencies]
+# gui
+iced = { version = "0.13", features = ["image", "tokio", "advanced", "canvas", "svg"] }
+
+# multimedia
+gstreamer = "0.23"
+gstreamer-video = "0.23"
+gstreamer-app = "0.23"
+gstreamer-pbutils = "0.23"
+gstreamer-audio = "0.23"
+
+# cli
+clap = { version = "4", features = ["derive"] }
+
+# config
+serde = { version = "1", features = ["derive"] }
+toml = "0.8"
+
+# logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# utils
+dirs = "6"
+anyhow = "1"
+crossbeam-channel = "0.5"
+tokio = { version = "1", features = ["rt", "time"] }
+

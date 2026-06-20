@@ -55,7 +55,27 @@ velocity/
 ### Prerequisites
 
 - **Rust** 1.94+ (install via [rustup.rs](https://rustup.rs/))
-- **GStreamer** runtime for Windows ([gstreamer.freedesktop.org](https://gstreamer.freedesktop.org/download/))
+- **GStreamer MSVC binaries** for Windows. Install both the **Runtime** and **Development** packages from [gstreamer.freedesktop.org](https://gstreamer.freedesktop.org/download/) (select MSVC 64-bit packages, v1.22+).
+
+### Windows Environment Configuration
+
+For Cargo to compile and link GStreamer correctly, you must set up the following environment variables (adjust paths if installed in a custom directory):
+
+#### PowerShell (Current Session)
+```powershell
+$env:GSTREAMER_1_0_ROOT_MSVC_X86_64 = "C:\Program Files\gstreamer\1.0\msvc_x86_64\"
+$env:PKG_CONFIG_PATH = "C:\Program Files\gstreamer\1.0\msvc_x86_64\lib\pkgconfig\"
+$env:Path = "C:\Program Files\gstreamer\1.0\msvc_x86_64\bin;" + $env:Path
+$env:LIB = "C:\Program Files\gstreamer\1.0\msvc_x86_64\lib;" + $env:LIB
+```
+
+#### CMD (Current Session)
+```cmd
+set GSTREAMER_1_0_ROOT_MSVC_X86_64=C:\Program Files\gstreamer\1.0\msvc_x86_64\
+set PKG_CONFIG_PATH=C:\Program Files\gstreamer\1.0\msvc_x86_64\lib\pkgconfig\
+set Path=C:\Program Files\gstreamer\1.0\msvc_x86_64\bin;%Path%
+set LIB=C:\Program Files\gstreamer\1.0\msvc_x86_64\lib;%LIB%
+```
 
 ### Build
 
