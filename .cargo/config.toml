@@ -1,0 +1,9 @@
+[env]
+GSTREAMER_1_0_ROOT_MSVC_X86_64 = "C:\\Program Files\\gstreamer\\1.0\\msvc_x86_64\\"
+PKG_CONFIG = "C:\\Program Files\\gstreamer\\1.0\\msvc_x86_64\\bin\\pkg-config.exe"
+PKG_CONFIG_PATH = "C:\\Program Files\\gstreamer\\1.0\\msvc_x86_64\\lib\\pkgconfig\\"
+
+[target.x86_64-pc-windows-msvc]
+rustflags = [
+    "-L", "native=C:\\Program Files\\gstreamer\\1.0\\msvc_x86_64\\lib",
+]
